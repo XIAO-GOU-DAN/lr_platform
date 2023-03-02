@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.SolveRecordsDao">
+
+    <resultMap type="com.lr.platform.entity.solveRecords.SolveRecords" id="SolveRecordsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="problemId" column="problem_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="degree" column="degree" jdbcType="NUMERIC"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="handlerId" column="handler_id" jdbcType="INTEGER"/>
+        <result property="submitTimes" column="submit_times" jdbcType="INTEGER"/>
+        <result property="latestSubmissionTime" column="latest_submission_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SolveRecordsMap">
+        select
+          id, created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time
+        from table_solve_records
+        where id = #{id} and deleted_at is null
+    </select>
+
+    <insert id="register" keyProperty="id" useGeneratedKeys="true">
+        insert into table_solve_records(problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time)
+        select  #{problemId}, #{userId}, #{degree}, #{status}, #{handlerId}, #{submitTimes}, #{latestSubmissionTime}
+        from dual where not exists(select id from table_solve_records where problem_id = #{problemId} and deleted_at is null and user_id = #{userId})
+    </insert>
+
+    <select id="queryBySolveRecords" resultMap="SolveRecordsMap">
+        select
+            id, created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time
+        from table_solve_records
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="problemId != null">
+                and problem_id = #{problemId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="degree != null">
+                and degree = #{degree}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="handlerId != null">
+                and handler_id = #{handlerId}
+            </if>
+            <if test="submitTimes != null">
+                and submit_times = #{submitTimes}
+            </if>
+            <if test="latestSubmissionTime != null">
+                and latest_submission_time = #{latestSubmissionTime}
+            </if>
+            <if test="domainId != null">
+                and problem_id in
+                (select id from table_problems where domain_id = #{domainId} and table_problems.deleted_at is null)
+            </if>
+        </where>
+    </select>
+
+    <update id="updateBySolveRecords">
+        update table_solve_records
+        <set>
+            <if test="set.deletedAt != null">
+                deleted_at = #{set.deletedAt},
+            </if>
+            <if test="set.problemId != null">
+                problem_id = #{set.problemId},
+            </if>
+            <if test="set.userId != null">
+                user_id = #{set.userId},
+            </if>
+            <if test="set.degree != null">
+                degree = #{set.degree},
+            </if>
+            <if test="set.status != null">
+                status = #{set.status},
+            </if>
+            <if test="set.handlerId != null">
+                handler_id = #{set.handlerId},
+            </if>
+            <if test="set.submitTimes != null">
+                submit_times = #{set.submitTimes},
+            </if>
+            <if test="set.latestSubmissionTime != null">
+                latest_submission_time = #{set.latestSubmissionTime},
+            </if>
+        </set>
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="where.id != null">
+                and id = #{where.id}
+            </if>
+            <if test="where.degree != null">
+                and degree = #{where.degree}
+            </if>
+            <if test="where.status != null">
+                and status = #{where.status}
+            </if>
+            <if test="where.handlerId != null">
+                and handler_id = #{where.handlerId}
+            </if>
+            <if test="where.submitTimes != null">
+                and submit_times = #{where.submitTimes}
+            </if>
+            <if test="where.latestSubmissionTime != null">
+                and latest_submission_time = #{where.latestSubmissionTime}
+            </if>
+            <if test="where.userId != null">
+                and user_id = #{where.userId}
+            </if>
+            <if test="where.problemId != null">
+                and problem_id = #{where.problemId}
+            </if>
+            <if test="where.domainId != null">
+                and problem_id in
+                (select id from table_problems where domain_id = #{where.domainId} and table_problems.deleted_at is null)
+            </if>
+        </where>
+    </update>
+
+    <select id="queryAll" resultMap="SolveRecordsMap">
+        select
+            id, created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time
+        from table_solve_records
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="problemId != null">
+                and problem_id = #{problemId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="degree != null">
+                and degree &gt; #{degree}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="handlerId != null">
+                and handler_id = #{handlerId}
+            </if>
+            <if test="submitTimes != null">
+                and submit_times = #{submitTimes}
+            </if>
+            <if test="latestSubmissionTime != null">
+                and latest_submission_time = #{latestSubmissionTime}
+            </if>
+            <if test="domainId != null">
+                and problem_id in
+                (select id from table_problems where domain_id = #{domainId} and table_problems.deleted_at is null)
+            </if>
+        </where>
+        ORDER BY `status`,latest_submission_time
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SolveRecordsMap">
+        select
+          id, created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time
+        from table_solve_records
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="problemId != null">
+                and problem_id = #{problemId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="degree != null">
+                and degree = #{degree}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="handlerId != null">
+                and handler_id = #{handlerId}
+            </if>
+            <if test="submitTimes != null">
+                and submit_times = #{submitTimes}
+            </if>
+            <if test="latestSubmissionTime != null">
+                and latest_submission_time = #{latestSubmissionTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+    <select id="countByWhereRecord" resultType="java.lang.Long">
+        select count(1)
+        from table_solve_records
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="problemId != null">
+                and problem_id = #{problemId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="degree != null">
+                and degree = #{degree}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="handlerId != null">
+                and handler_id = #{handlerId}
+            </if>
+            <if test="submitTimes != null">
+                and submit_times = #{submitTimes}
+            </if>
+            <if test="latestSubmissionTime != null">
+                and latest_submission_time = #{latestSubmissionTime}
+            </if>
+            <if test="domainId != null">
+                and problem_id in
+                (select id from table_problems where domain_id = #{domainId} and table_problems.deleted_at is null)
+            </if>
+        </where>
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_solve_records
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="problemId != null">
+                and problem_id = #{problemId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="degree != null">
+                and degree = #{degree}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="handlerId != null">
+                and handler_id = #{handlerId}
+            </if>
+            <if test="submitTimes != null">
+                and submit_times = #{submitTimes}
+            </if>
+            <if test="latestSubmissionTime != null">
+                and latest_submission_time = #{latestSubmissionTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_solve_records(problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time)
+        values (#{problemId}, #{userId}, #{degree}, #{status}, #{handlerId}, #{submitTimes}, #{latestSubmissionTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_solve_records(created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.problemId}, #{entity.userId}, #{entity.degree}, #{entity.status}, #{entity.handlerId}, #{entity.submitTimes}, #{entity.latestSubmissionTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_solve_records(created_at, updated_at, deleted_at, problem_id, user_id, degree, status, handler_id, submit_times, latest_submission_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.problemId}, #{entity.userId}, #{entity.degree}, #{entity.status}, #{entity.handlerId}, #{entity.submitTimes}, #{entity.latestSubmissionTime})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        problem_id = values(problem_id),
+        user_id = values(user_id),
+        degree = values(degree),
+        status = values(status),
+        handler_id = values(handler_id),
+        submit_times = values(submit_times),
+        latest_submission_time = values(latest_submission_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_solve_records
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="problemId != null">
+                problem_id = #{problemId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="degree != null">
+                degree = #{degree},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="handlerId != null">
+                handler_id = #{handlerId},
+            </if>
+            <if test="submitTimes != null">
+                submit_times = #{submitTimes},
+            </if>
+            <if test="latestSubmissionTime != null">
+                latest_submission_time = #{latestSubmissionTime},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <update id="handleUpload">
+        update table_solve_records
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="problemId != null">
+                problem_id = #{problemId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="degree != null">
+                degree = #{degree},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="handlerId != null">
+                handler_id = #{handlerId},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null and `status` &lt;= #{status}
+    </update>
+
+    <update id="updateSolveRecordsAddOneToSubmitTimes">
+        update table_solve_records
+        <set>
+            <if test="true">
+                submit_times = submit_times + 1,
+            </if>
+            <if test="true">
+                latest_submission_time = current_timestamp,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="problemId != null">
+                problem_id = #{problemId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="degree != null">
+                degree = #{degree},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="handlerId != null">
+                handler_id = #{handlerId},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_solve_records where id = #{id}
+    </delete>
+
+</mapper>
+

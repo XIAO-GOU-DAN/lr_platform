@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.AdminsDao">
+
+    <resultMap type="com.lr.platform.entity.admins.Admins" id="AdminsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="qq" column="qq" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="changePasswordAt" column="change_password_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="register" keyProperty="id" useGeneratedKeys="true">
+        insert into table_admins(username, password, name, qq,email)
+        select  #{username}, #{password}, #{name}, #{qq},#{email}
+        from dual where not exists(select id from table_admins where binary username = #{username} and deleted_at is null or email = #{email} and deleted_at is null)
+    </insert>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AdminsMap">
+        select
+          id, created_at, updated_at, deleted_at, username, password, name, qq,email,change_password_at
+        from table_admins
+        where id = #{id} and deleted_at is null
+    </select>
+    <select id="queryByAdmins" resultMap="AdminsMap">
+        select
+            id, created_at, updated_at, deleted_at, username, password, name, qq,email,change_password_at
+        from table_admins
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and binary username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and binary password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="changePasswordAt != null">
+                and change_password_at = #{changePasswordAt}
+            </if>
+        </where>
+    </select>
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_admins
+                       where id= #{id}
+                         and deleted_at is null
+                   )
+    </select>
+    <select id="existsByAdmin" resultType="java.lang.Boolean">
+        select exists(
+        select id
+        from table_admins
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="username != null and username != ''">
+                and binary username = #{username}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="changePasswordAt != null">
+                and change_password_at = #{changePasswordAt}
+            </if>
+        </where>
+                   )
+    </select>
+    <select id="getAll" resultMap="AdminsMap">
+        select
+            id, created_at, updated_at, deleted_at, username, password, name, qq,email,change_password_at
+        from table_admins
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="changePasswordAt != null">
+                and change_password_at = #{changePasswordAt}
+            </if>
+        </where>
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AdminsMap">
+        select
+          id, created_at, updated_at, deleted_at, username, password, name, qq,email,change_password_at
+        from table_admins
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="changePasswordAt != null">
+                and change_password_at = #{changePasswordAt}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_admins
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="changePasswordAt != null">
+                and change_password_at = #{changePasswordAt}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_admins( username, password, name, qq,email)
+        values (#{username}, #{password}, #{name}, #{qq}, #{email})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_admins(created_at, updated_at, deleted_at, username, password, name, qq)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.qq})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_admins(created_at, updated_at, deleted_at, username, password, name, qq)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.qq})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        username = values(username),
+        password = values(password),
+        name = values(name),
+        qq = values(qq)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_admins
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="qq != null and qq != ''">
+                qq = #{qq},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="changePasswordAt != null">
+                change_password_at = #{changePasswordAt},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_admins where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="platform-service-admins" />
+        <module name="platform-service-domains" />
+        <module name="platform-service-domainsAdmins" />
+        <module name="platform-service-managerLog" />
+        <module name="platform-controller-guest" />
+        <module name="platform-entity" />
+        <module name="platform-controller-admin" />
+        <module name="platform-service-users" />
+        <module name="platform-service-solveRecords" />
+        <module name="platform-service-guestLog" />
+        <module name="platform-common" />
+        <module name="platform-service-problems" />
+        <module name="platform-service-announcement" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="platform-dao-users" target="8" />
+      <module name="platform-kill-demo" target="8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.lr</groupId>
+  <artifactId>platformApp</artifactId>
+  <version>1.0.0</version>
+  <modules>
+    <module>platform-common</module>
+    <module>platform-entity</module>
+    <module>platform-controller-guest</module>
+    <module>platform-controller-admin</module>
+    <module>platform-service-users</module>
+    <module>platform-service-problems</module>
+    <module>platform-service-domains</module>
+    <module>platform-service-guestLog</module>
+    <module>platform-service-solveRecords</module>
+    <module>platform-service-managerLog</module>
+    <module>platform-service-admins</module>
+    <module>platform-service-domainsAdmins</module>
+    <module>platform-service-announcement</module>
+  </modules>
+
+  <packaging>pom</packaging>
+
+  <properties>
+    <old.version>2.3.12.RELEASE</old.version>
+    <spring.version>2.7.1</spring.version>
+    <spring.security.version>2.7.0</spring.security.version>
+    <spring.cloud.version>Hoxton.SR12</spring.cloud.version>
+    <spring.cloud.alibaba.version>2.2.8.RELEASE</spring.cloud.alibaba.version>
+    <spring.cloud.nacos.discovery.version>2.2.8.RELEASE</spring.cloud.nacos.discovery.version>
+    <spring.cloud.nacos.config.version>2.2.8.RELEASE</spring.cloud.nacos.config.version>
+    <aop.version>1.9.9.1</aop.version>
+    <jwt.version>3.19.2</jwt.version>
+    <swagger.version>3.0.0</swagger.version>
+    <knife4j.version>3.0.3</knife4j.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <junit.version>4.13.2</junit.version>
+    <lombok.version>1.18.24</lombok.version>
+    <log4j.version>1.2.17</log4j.version>
+    <mysql.version>8.0.29</mysql.version>
+    <druid.version>1.1.16</druid.version>
+    <mybatis.spring.boot.version>2.2.2</mybatis.spring.boot.version>
+    <pageHelper.version>1.4.1</pageHelper.version>
+    <dozer.version>6.4.1</dozer.version>
+    <logback.version>1.2.11</logback.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--spring boot-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!--spring cloud
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        Hoxton.SR12 2021.0.3
+        <version>${spring.cloud.version}</version>
+      </dependency>-->
+
+      <!--alibaba
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        2.2.7.RELEASE 2021.0.1.0
+        <version>${spring.cloud.alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>-->
+
+      <!--mysql-->
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>${mybatis.spring.boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper-spring-boot-starter</artifactId>
+        <version>${pageHelper.version}</version>
+      </dependency>
+
+      <!--实体类转换-->
+      <dependency>
+        <groupId>com.github.dozermapper</groupId>
+        <artifactId>dozer-spring-boot-starter</artifactId>
+        <version>${dozer.version}</version>
+      </dependency>
+
+      <!--JWT-->
+      <dependency>
+        <groupId>com.auth0</groupId>
+        <artifactId>java-jwt</artifactId>
+        <version>${jwt.version}</version>
+      </dependency>
+
+      <!--druid
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>${druid.version}</version>
+      </dependency>-->
+
+      <!--AOP-->
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aop.version}</version>
+      </dependency>
+
+      <!--junit-->
+      <!--
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>-->
+
+      <!--lombok-->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <optional>true</optional>
+      </dependency>
+
+      <!-- logback -->
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-access</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+
+      <!--password-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+
+      <!--redis-->
+      <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <!--<version>4.2.3 3.7.1</version>-->
+        <version>3.7.1</version>
+      </dependency>
+
+      <!--sha256-->
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.15</version>
+      </dependency>
+
+      <!--swagger-->
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-boot-starter</artifactId>
+        <version>${swagger.version}</version>
+        <!--
+        <version>3.0.1</version>-->
+      </dependency>
+      <dependency>
+        <groupId>com.github.xiaoymin</groupId>
+        <artifactId>knife4j-spring-boot-starter</artifactId>
+        <version>${knife4j.version}</version>
+      </dependency>
+
+      <!--nacos-->
+      <!--
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        <version>${spring.cloud.nacos.discovery.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        <version>${spring.cloud.nacos.config.version}</version>
+      </dependency>-->
+      <!--
+      <dependency>
+        <groupId>com.alibaba.boot</groupId>
+        <artifactId>nacos-discovery-spring-boot-starter</artifactId>
+        <version>0.2.5</version>
+      </dependency>-->
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.7.1</version>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

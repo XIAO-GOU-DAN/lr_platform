@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.AnnouncementDao">
+
+    <resultMap type="com.lr.platform.entity.announcement.Announcement" id="AnnouncementMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="firstAdminId" column="first_admin_id" jdbcType="INTEGER"/>
+        <result property="latestAdminId" column="latest_admin_id" jdbcType="INTEGER"/>
+        <result property="announcementType" column="announcement_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AnnouncementMap">
+        select
+          id, created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id, announcement_type
+        from table_announcement
+        where id = #{id} and deleted_at is null
+    </select>
+    <select id="queryAll" resultMap="AnnouncementMap">
+        select
+        id, created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id, announcement_type
+        from table_announcement
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="firstAdminId != null">
+                and first_admin_id = #{firstAdminId}
+            </if>
+            <if test="latestAdminId != null">
+                and latest_admin_id = #{latestAdminId}
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                and announcement_type = #{announcementType}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+    <!--查询指定行数据-->
+    <!--<foreach collection="ids" item="entity" open="(" separator="," close=")">
+            #{entity}
+        </foreach>-->
+    <select id="queryByUpdateOffset" resultMap="AnnouncementMap">
+        select
+        id, created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id,announcement_type
+        from table_announcement
+        <where>
+            <if test="updateOffset != null">
+                and id &gt; #{updateOffset}
+            </if>
+            <if test="updateOffset == null">
+                and id &lt;= (SELECT MAX(id) FROM table_announcement)
+            </if>
+            <if test="endId != null">
+                and id > #{endId}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="firstAdminId != null">
+                and first_admin_id = #{firstAdminId}
+            </if>
+            <if test="latestAdminId != null">
+                and latest_admin_id = #{latestAdminId}
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                and announcement_type = #{announcementType}
+            </if>
+        </where>
+        ORDER BY id DESC LIMIT 20
+    </select>
+    <select id="queryByOffsetId" resultMap="AnnouncementMap">
+        select
+            id, created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id,announcement_type
+        from table_announcement
+        <where>
+            <if test="nextOffset != null">
+                and id &lt; #{nextOffset}
+            </if>
+            <if test="nextOffset == null">
+                and id &lt;= (SELECT MAX(id) FROM table_announcement)
+            </if>
+            <if test="endId != null">
+                and id > #{endId}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="firstAdminId != null">
+                and first_admin_id = #{firstAdminId}
+            </if>
+            <if test="latestAdminId != null">
+                and latest_admin_id = #{latestAdminId}
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                and announcement_type = #{announcementType}
+            </if>
+        </where>
+        ORDER BY id DESC LIMIT 20
+    </select>
+    <select id="queryAllByLimit" resultMap="AnnouncementMap">
+        select
+          id, created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id,announcement_type
+        from table_announcement
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="firstAdminId != null">
+                and first_admin_id = #{firstAdminId}
+            </if>
+            <if test="latestAdminId != null">
+                and latest_admin_id = #{latestAdminId}
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                and announcement_type = #{announcementType}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_announcement
+        <where>
+            <if test="id != null">
+                and id &lt; #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="firstAdminId != null">
+                and first_admin_id = #{firstAdminId}
+            </if>
+            <if test="latestAdminId != null">
+                and latest_admin_id = #{latestAdminId}
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                and announcement_type = #{announcementType}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_announcement(id, title, content, first_admin_id, latest_admin_id, announcement_type)
+        values (#{id} ,#{title}, #{content}, #{firstAdminId}, #{latestAdminId}, #{announcementType})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_announcement(id,created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id},#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.title}, #{entity.content}, #{entity.firstAdminId}, #{entity.latestAdminId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_announcement(id,created_at, updated_at, deleted_at, title, content, first_admin_id, latest_admin_id
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.title}, #{entity.content}, #{entity.firstAdminId}, #{entity.latestAdminId})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        title = values(title),
+        content = values(content),
+        first_admin_id = values(first_admin_id),
+        latest_admin_id = values(latest_admin_id),
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_announcement
+        <set>
+            <if test="setId != null">
+                id = #{setId},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="firstAdminId != null">
+                first_admin_id = #{firstAdminId},
+            </if>
+            <if test="latestAdminId != null">
+                latest_admin_id = #{latestAdminId},
+            </if>
+            <if test="announcementType != null and announcementType != ''">
+                announcement_type = #{announcementType},
+            </if>
+        </set>
+        where id = #{rawId} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_announcement where id = #{id}
+    </delete>
+
+</mapper>
+

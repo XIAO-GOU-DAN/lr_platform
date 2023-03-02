@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  tomcat:
+    image: tomcat:8-jdk8
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./target:/usr/local/tomcat/webapps
+      - ./catalina.sh:/usr/local/tomcat/bin/catalina.sh
+      - ./logs:/usr/local/tomcat/logs
+      - ./server.xml:/usr/local/tomcat/conf/server.xml
+      - ./logging.properties:/usr/local/tomcat/conf/logging.properties
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sqls:/docker-entrypoint-initdb.d
+      - ./mysql_data:/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    volumes:
+            #- ./redis.conf:/etc/redis/redis.conf
+      - ./redis-data:/data
+    command:
+      /bin/bash -c "redis-server --port 6379 --requirepass Wky15878295798 --appendonly yes"

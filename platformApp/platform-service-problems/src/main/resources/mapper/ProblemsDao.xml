@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.ProblemsDao">
+
+    <resultMap type="com.lr.platform.entity.problems.Problems" id="ProblemsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="domainId" column="domain_id" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="originalScore" column="original_score" jdbcType="INTEGER"/>
+        <result property="currentScore" column="current_score" jdbcType="INTEGER"/>
+        <result property="solverNum" column="solver_num" jdbcType="INTEGER"/>
+        <result property="firstSolverId" column="first_solver_id" jdbcType="INTEGER"/>
+        <result property="firstSolveTime" column="first_solve_time" jdbcType="TIMESTAMP"/>
+        <result property="isShow" column="is_show" jdbcType="INTEGER"/>
+        <result property="submitType" column="submit_type" jdbcType="VARCHAR"/>
+        <result property="flag" column="flag" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="revisedAt" column="revised_at" jdbcType="TIMESTAMP"/>
+        <result property="deadline" column="deadline" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ProblemsMap">
+        select
+          id, created_at, updated_at, deleted_at, domain_id, content, original_score, current_score, solver_num, first_solver_id, first_solve_time, is_show, submit_type, flag, title,revised_at,deadline
+        from table_problems
+        where id = #{id} and deleted_at is null
+    </select>
+
+
+
+    <update id="updateByProblems">
+        update table_problems
+        <set>
+            <if test="set.deletedAt != null">
+                deleted_at = #{set.deletedAt},
+            </if>
+            <if test="set.domainId != null">
+                domain_id = #{set.domainId},
+            </if>
+            <if test="set.content != null and set.content != ''">
+                content = #{set.content},
+            </if>
+            <if test="set.originalScore != null">
+                original_score = #{set.originalScore},
+            </if>
+            <if test="set.currentScore != null">
+                current_score = #{set.currentScore},
+            </if>
+            <if test="set.solverNum != null">
+                solver_num = #{set.solverNum},
+            </if>
+            <if test="set.firstSolverId != null">
+                first_solver_id = #{set.firstSolverId},
+            </if>
+            <if test="set.firstSolveTime != null">
+                first_solve_time = #{set.firstSolveTime},
+            </if>
+            <if test="set.isShow != null">
+                is_show = #{set.isShow},
+            </if>
+            <if test="set.submitType != null and set.submitType != ''">
+                submit_type = #{set.submitType},
+            </if>
+            <if test="set.flag != null and set.flag != ''">
+                flag = #{set.flag},
+            </if>
+            <if test="set.title != null and set.title != ''">
+                title = #{set.title},
+            </if>
+            <if test="set.revisedAt != null">
+                revised_at = #{set.revisedAt},
+            </if>
+            <if test="set.deadline != null">
+                deadline = #{set.deadline}
+            </if>
+        </set>
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="where.domainId != null">
+                and domain_id = #{where.domainId}
+            </if>
+            <if test="where.content != null and where.content != ''">
+                and content = #{where.content}
+            </if>
+            <if test="where.originalScore != null">
+                and original_score = #{where.originalScore}
+            </if>
+            <if test="where.currentScore != null">
+                and current_score = #{where.currentScore}
+            </if>
+            <if test="where.solverNum != null">
+                and solver_num = #{where.solverNum}
+            </if>
+            <if test="where.firstSolverId != null">
+                and first_solver_id = #{where.firstSolverId}
+            </if>
+            <if test="where.firstSolveTime != null">
+                and first_solve_time = #{where.firstSolveTime}
+            </if>
+            <if test="where.isShow != null">
+                and is_show = #{where.isShow}
+            </if>
+            <if test="where.submitType != null and where.submitType != ''">
+                and submit_type = #{where.submitType}
+            </if>
+            <if test="where.flag != null and where.flag != ''">
+                and flag = #{where.flag}
+            </if>
+            <if test="where.title != null and where.title != ''">
+                and title = #{where.title}
+            </if>
+            <if test="where.revisedAt != null">
+                and revised_at = #{where.revisedAt}
+            </if>
+            <if test="where.deadline != null">
+                and deadline = #{where.deadline}
+            </if>
+        </where>
+    </update>
+
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_problems
+                       where id= #{id}
+                         and deleted_at is null
+                   )
+    </select>
+
+
+    <select id="queryAll" resultMap="ProblemsMap">
+        select
+            id, created_at, updated_at, deleted_at, domain_id, content, original_score, current_score, solver_num, first_solver_id, first_solve_time, is_show, submit_type, flag, title,revised_at,deadline
+        from table_problems
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="domainId != null">
+                and domain_id = #{domainId}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="originalScore != null">
+                and original_score = #{originalScore}
+            </if>
+            <if test="currentScore != null">
+                and current_score = #{currentScore}
+            </if>
+            <if test="solverNum != null">
+                and solver_num = #{solverNum}
+            </if>
+            <if test="firstSolverId != null">
+                and first_solver_id = #{firstSolverId}
+            </if>
+            <if test="firstSolveTime != null">
+                and first_solve_time = #{firstSolveTime}
+            </if>
+            <if test="isShow != null">
+                and is_show = #{isShow}
+            </if>
+            <if test="submitType != null and submitType != ''">
+                and submit_type = #{submitType}
+            </if>
+            <if test="flag != null and flag != ''">
+                and flag = #{flag}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="revisedAt != null">
+                and revised_at = #{revisedAt}
+            </if>
+            <if test="deadline != null">
+                and deadline = #{deadline}
+            </if>
+        </where>
+        ORDER BY is_show desc,revised_at
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_problems
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="domainId != null">
+                and domain_id = #{domainId}
+            </if>
+            <if test="content != null and content != ''">
+                and content = #{content}
+            </if>
+            <if test="originalScore != null">
+                and original_score = #{originalScore}
+            </if>
+            <if test="currentScore != null">
+                and current_score = #{currentScore}
+            </if>
+            <if test="solverNum != null">
+                and solver_num = #{solverNum}
+            </if>
+            <if test="firstSolverId != null">
+                and first_solver_id = #{firstSolverId}
+            </if>
+            <if test="firstSolveTime != null">
+                and first_solve_time = #{firstSolveTime}
+            </if>
+            <if test="isShow != null">
+                and is_show = #{isShow}
+            </if>
+            <if test="submitType != null and submitType != ''">
+                and submit_type = #{submitType}
+            </if>
+            <if test="flag != null and flag != ''">
+                and flag = #{flag}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="deadline != null">
+                and deadline = #{deadline}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_problems( domain_id, content, original_score, current_score, solver_num, first_solver_id, first_solve_time, is_show, submit_type, flag, title,revised_at,deadline)
+        values (#{domainId}, #{content}, #{originalScore}, #{currentScore}, #{solverNum}, #{firstSolverId}, #{firstSolveTime}, #{isShow}, #{submitType}, #{flag}, #{title},#{revisedAt},#{deadline})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_problems(created_at, updated_at, deleted_at, domain_id, content, original_score, current_score, solver_num, first_solver_id, first_solve_time, is_show, submit_type, flag, title,revised_at,deadline)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.domainId}, #{entity.content}, #{entity.originalScore}, #{entity.currentScore}, #{entity.solverNum}, #{entity.firstSolverId}, #{entity.firstSolveTime}, #{entity.isShow}, #{entity.submitType}, #{entity.flag}, #{entity.title}, #{entity.revisedAt}, #{entity.deadline})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_problems(created_at, updated_at, deleted_at, domain_id, content, original_score, current_score, solver_num, first_solver_id, first_solve_time, is_show, submit_type, flag, title,revised_at,deadline)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.domainId}, #{entity.content}, #{entity.originalScore}, #{entity.currentScore}, #{entity.solverNum}, #{entity.firstSolverId}, #{entity.firstSolveTime}, #{entity.isShow}, #{entity.submitType}, #{entity.flag}, #{entity.title}, #{entity.revisedAt}, #{entity.deadline})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        domain_id = values(domain_id),
+        content = values(content),
+        original_score = values(original_score),
+        current_score = values(current_score),
+        solver_num = values(solver_num),
+        first_solver_id = values(first_solver_id),
+        first_solve_time = values(first_solve_time),
+        is_show = values(is_show),
+        submit_type = values(submit_type),
+        flag = values(flag),
+        title = values(title),
+        revised_at = values(revised_at),
+        deadline = values(deadline)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_problems
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="domainId != null">
+                domain_id = #{domainId},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="originalScore != null">
+                original_score = #{originalScore},
+            </if>
+            <if test="currentScore != null">
+                current_score = #{currentScore},
+            </if>
+            <if test="solverNum != null">
+                solver_num = #{solverNum},
+            </if>
+            <if test="firstSolverId != null">
+                first_solver_id = #{firstSolverId},
+            </if>
+            <if test="firstSolveTime != null">
+                first_solve_time = #{firstSolveTime},
+            </if>
+            <if test="isShow != null">
+                is_show = #{isShow},
+            </if>
+            <if test="submitType != null and submitType != ''">
+                submit_type = #{submitType},
+            </if>
+            <if test="flag != null and flag != ''">
+                flag = #{flag},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="revisedAt != null">
+                revised_at = #{revisedAt},
+            </if>
+            <if test="deadline != null">
+                deadline = #{deadline},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_problems where id = #{id}
+    </delete>
+
+</mapper>
+

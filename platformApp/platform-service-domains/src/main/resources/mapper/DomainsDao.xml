@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.DomainsDao">
+
+    <resultMap type="com.lr.platform.entity.domains.Domains" id="DomainsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="register" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains( name, description)
+        select   #{name}, #{description}
+        from dual where not exists(select id from table_domains where binary name = #{name} and deleted_at is null)
+    </insert>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DomainsMap">
+        select
+          id, created_at, updated_at, deleted_at, name, description
+        from table_domains
+        where id = #{id} and deleted_at is null
+    </select>
+
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_domains
+                       where id= #{id}
+                         and deleted_at is null
+                   )
+    </select>
+
+    <select id="existsByDomains" resultType="java.lang.Boolean">
+        select exists(
+        select id
+        from table_domains
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id &lt;&gt; #{id}
+            </if>
+            <if test="true">
+                and name = #{name}
+            </if>
+        </where>
+        )
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DomainsMap">
+        select
+          id, created_at, updated_at, deleted_at, name, description
+        from table_domains
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="queryAll" resultMap="DomainsMap">
+        select
+            id, created_at, updated_at, deleted_at, name, description
+        from table_domains
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_domains
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains(name, description)
+        values ( #{name}, #{description})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains(created_at, updated_at, deleted_at, name, description)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.name}, #{entity.description})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains(created_at, updated_at, deleted_at, name, description)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.name}, #{entity.description})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        name = values(name),
+        description = values(description)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_domains
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+        </set>
+        <where>
+            <if test="true">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="name != null and name != ''">
+                and not EXISTS(SELECT a.id FROM (SELECT id FROM table_domains WHERE deleted_at is NULL AND id &lt;&gt; #{id} and `name`=#{name})a)
+            </if>
+        </where>
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_domains where id = #{id}
+    </delete>
+
+</mapper>
+

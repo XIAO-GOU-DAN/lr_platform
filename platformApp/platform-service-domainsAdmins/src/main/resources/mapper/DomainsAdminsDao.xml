@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.DomainsAdminsDao">
+
+    <resultMap type="com.lr.platform.entity.domainsAdmins.DomainsAdmins" id="DomainsAdminsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="domainId" column="domain_id" jdbcType="INTEGER"/>
+        <result property="adminId" column="admin_id" jdbcType="INTEGER"/>
+    </resultMap>
+    <!--查询单个-->
+    <select id="queryById" resultMap="DomainsAdminsMap">
+        select
+          id, created_at, updated_at, deleted_at, domain_id, admin_id
+        from table_domains_admins
+        where id = #{id} and deleted_at is null
+    </select>
+
+    <insert id="register" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains_admins( domain_id, admin_id)
+        select   #{domainId}, #{adminId}
+        from dual where not exists(select id from table_domains_admins where domain_id = #{domainId} and admin_id = #{adminId} and deleted_at is null)
+    </insert>
+
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_domains_admins
+                       where id= #{id}
+                         and deleted_at is null
+                   )
+    </select>
+
+    <select id="queryAll" resultMap="DomainsAdminsMap">
+        select
+            id, created_at, updated_at, deleted_at, domain_id, admin_id
+        from table_domains_admins
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="domainId != null">
+                and domain_id = #{domainId}
+            </if>
+            <if test="adminId != null">
+                and admin_id = #{adminId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateByDomainAdmin">
+        update table_domains_admins
+        <set>
+            <if test="set.deletedAt != null">
+                deleted_at = #{set.deletedAt},
+            </if>
+            <if test="set.domainId != null">
+                domain_id = #{set.domainId},
+            </if>
+            <if test="set.adminId != null">
+                admin_id = #{set.adminId},
+            </if>
+        </set>
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="where.id != null">
+                and id = #{where.id}
+            </if>
+            <if test="where.domainId != null">
+                and domain_id = #{where.domainId}
+            </if>
+            <if test="where.adminId != null">
+                and admin_id = #{where.adminId}
+            </if>
+        </where>
+    </update>
+    <select id="existsByDomainAdmin" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_domains_admins
+                        <where>
+                            <if test="id != null">
+                                and id = #{id}
+                            </if>
+                            <if test="createdAt != null">
+                                and created_at = #{createdAt}
+                            </if>
+                            <if test="updatedAt != null">
+                                and updated_at = #{updatedAt}
+                            </if>
+                            <if test="true">
+                                and deleted_at is null
+                            </if>
+                            <if test="domainId != null">
+                                and domain_id = #{domainId}
+                            </if>
+                            <if test="adminId != null">
+                                and admin_id = #{adminId}
+                            </if>
+                        </where>
+                   )
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DomainsAdminsMap">
+        select
+          id, created_at, updated_at, deleted_at, domain_id, admin_id
+        from table_domains_admins
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="domainId != null">
+                and domain_id = #{domainId}
+            </if>
+            <if test="adminId != null">
+                and admin_id = #{adminId}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_domains_admins
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="domainId != null">
+                and domain_id = #{domainId}
+            </if>
+            <if test="adminId != null">
+                and admin_id = #{adminId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains_admins(domain_id, admin_id)
+        values (#{domainId}, #{adminId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains_admins(created_at, updated_at, deleted_at, domain_id, admin_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.domainId}, #{entity.adminId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_domains_admins(created_at, updated_at, deleted_at, domain_id, admin_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.domainId}, #{entity.adminId})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        domain_id = values(domain_id),
+        admin_id = values(admin_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_domains_admins
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="domainId != null">
+                domain_id = #{domainId},
+            </if>
+            <if test="adminId != null">
+                admin_id = #{adminId},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_domains_admins where id = #{id}
+    </delete>
+
+</mapper>
+

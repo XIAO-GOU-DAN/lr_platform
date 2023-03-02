@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.ManagerLogDao">
+
+    <resultMap type="com.lr.platform.entity.managerLog.ManagerLog" id="ManagerLogMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="level" column="level" jdbcType="INTEGER"/>
+        <result property="commonOption" column="common_option" jdbcType="VARCHAR"/>
+        <result property="op" column="op" jdbcType="VARCHAR"/>
+        <result property="timeConsuming" column="time_consuming" jdbcType="INTEGER"/>
+        <result property="ip" column="ip" jdbcType="VARCHAR"/>
+        <result property="parameter" column="parameter" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ManagerLogMap">
+        select
+          id, created_at, updated_at, deleted_at, user_id, level, common_option, op, time_consuming, ip, parameter
+        from table_manager_log
+        where id = #{id} and deleted_at is null
+    </select>
+    <select id="queryByOffset" resultMap="ManagerLogMap">
+        select
+        id, created_at, updated_at, deleted_at, user_id, level, op, common_option, time_consuming, ip, parameter
+        from table_manager_log
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id &lt; #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="level != null">
+                and level = #{level}
+            </if>
+            <if test="commonOption != null and commonOption != ''">
+                and common_option = #{commonOption}
+            </if>
+            <if test="op != null and op != ''">
+                and op = #{op}
+            </if>
+            <if test="timeConsuming != null">
+                and time_consuming = #{timeConsuming}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="parameter != null and parameter != ''">
+                and parameter = #{parameter}
+            </if>
+        </where>
+        ORDER BY id desc LIMIT 20
+    </select>
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+            select id
+            from table_manager_log
+            where id= #{id}
+            and deleted_at is null
+                   )
+    </select>
+    <select id="getAll" resultMap="ManagerLogMap">
+        select
+        id, created_at, updated_at, deleted_at, user_id, level, common_option, op, time_consuming, ip, parameter
+        from table_manager_log
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="level != null">
+                and level = #{level}
+            </if>
+            <if test="commonOption != null and commonOption != ''">
+                and common_option = #{commonOption}
+            </if>
+            <if test="op != null and op != ''">
+                and op = #{op}
+            </if>
+            <if test="timeConsuming != null">
+                and time_consuming = #{timeConsuming}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="parameter != null and parameter != ''">
+                and parameter = #{parameter}
+            </if>
+        </where>
+        order by created_at desc
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ManagerLogMap">
+        select
+          id, created_at, updated_at, deleted_at, user_id, level, common_option, op, time_consuming, ip, parameter
+        from table_manager_log
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="level != null">
+                and level = #{level}
+            </if>
+            <if test="commonOption != null and commonOption != ''">
+                and common_option = #{commonOption}
+            </if>
+            <if test="op != null and op != ''">
+                and op = #{op}
+            </if>
+            <if test="timeConsuming != null">
+                and time_consuming = #{timeConsuming}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="parameter != null and parameter != ''">
+                and parameter = #{parameter}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_manager_log
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="level != null">
+                and level = #{level}
+            </if>
+            <if test="commonOption != null and commonOption != ''">
+                and common_option = #{commonOption}
+            </if>
+            <if test="op != null and op != ''">
+                and op = #{op}
+            </if>
+            <if test="timeConsuming != null">
+                and time_consuming = #{timeConsuming}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="parameter != null and parameter != ''">
+                and parameter = #{parameter}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_manager_log(user_id, level, common_option, op, time_consuming, ip, parameter)
+        values (#{userId}, #{level}, #{commonOption}, #{op}, #{timeConsuming}, #{ip}, #{parameter})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_manager_log(created_at, updated_at, deleted_at, user_id, level, common_option, op, time_consuming, ip, parameter)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.userId}, #{entity.level}, #{entity.commonOption}, #{entity.op}, #{entity.timeConsuming}, #{entity.ip}, #{entity.parameter})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_manager_log(created_at, updated_at, deleted_at, user_id, level, common_option, op, time_consuming, ip, parameter)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.userId}, #{entity.level}, #{entity.commonOption}, #{entity.op}, #{entity.timeConsuming}, #{entity.ip}, #{entity.parameter})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        user_id = values(user_id),
+        level = values(level),
+        common_option = values(common_option),
+        op = values(op),
+        time_consuming = values(time_consuming),
+        ip = values(ip),
+        parameter = values(parameter)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_manager_log
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+            <if test="commonOption != null and commonOption != ''">
+                common_option = #{commonOption},
+            </if>
+            <if test="op != null and op != ''">
+                op = #{op},
+            </if>
+            <if test="timeConsuming != null">
+                time_consuming = #{timeConsuming},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="parameter != null and parameter != ''">
+                parameter = #{parameter},
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_manager_log where id = #{id}
+    </delete>
+
+</mapper>
+

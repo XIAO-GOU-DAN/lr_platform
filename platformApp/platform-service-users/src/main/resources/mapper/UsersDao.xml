@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lr.platform.dao.UsersDao">
+
+    <resultMap type="com.lr.platform.entity.users.Users" id="UsersMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="qq" column="qq" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="studentNum" column="student_num" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <result property="totalScore" column="total_score" jdbcType="INTEGER"/>
+        <result property="totalSolveNum" column="total_solve_num" jdbcType="INTEGER"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.lr.platform.entity.users.Users" id="GradeMap">
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="register" keyProperty="id" useGeneratedKeys="true">
+        insert into table_users( username, password, name, qq, phone, student_num, grade, total_score, total_solve_num,email)
+        select  #{username}, #{password}, #{name}, #{qq}, #{phone}, #{studentNum}, #{grade}, #{totalScore}, #{totalSolveNum}, #{email}
+        from dual where not exists(select id from table_users where binary username = #{username} and deleted_at is null or binary email = #{email} and deleted_at is null)
+    </insert>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UsersMap">
+        select
+            id, created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num,email
+        from table_users
+        where id = #{id} and deleted_at is null
+    </select>
+
+    <!--查询是否存在-->
+    <select id="exists" resultType="java.lang.Boolean">
+        select exists(
+                       select id
+                       from table_users
+                       where id= #{id}
+                         and deleted_at is null
+                   )
+    </select>
+    <select id="queryByQueryUser" resultMap="UsersMap">
+        select
+        id, created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num,email
+        from table_users
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and
+            </if>
+            <if test="username != null and username != ''">
+                and
+                (
+                username like #{username}
+                or name like #{username}
+                or qq like #{username}
+                or email like #{username}
+                or student_num like #{username}
+                or phone like #{username}
+                )
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+        </where>
+    </select>
+    <select id="queryByUsers" resultMap="UsersMap">
+        select
+        id, created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num,email
+        from table_users
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and binary username = #{username}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and binary email = #{email}
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryByOffset" resultMap="UsersMap">
+        select
+        id, created_at, updated_at, deleted_at, username,password, name, qq, phone, student_num, grade, total_score, total_solve_num ,email
+        from table_users
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id &gt; #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and binary email = #{email}
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+        </where>
+        ORDER BY id LIMIT 20
+    </select>
+
+    <select id="queryAll" resultMap="UsersMap">
+        select
+            id, created_at, updated_at, deleted_at, username,password, name, qq, phone, student_num, grade, total_score, total_solve_num ,email
+        from table_users
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="email != null and email != ''">
+                and binary email = #{email}
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllExcludeUsers" resultMap="UsersMap">
+        select
+        id, created_at, updated_at, deleted_at, username,password, name, qq, phone, student_num, grade, total_score, total_solve_num
+        from table_users
+        <where>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="u.id != null">
+                and id = #{id}
+            </if>
+            <if test="u.username != null and u.username != ''">
+                and username = #{username}
+            </if>
+            <if test="u.name != null and u.name != ''">
+                and name = #{name}
+            </if>
+            <if test="u.qq != null and u.qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="u.email != null and u.email != ''">
+                and binary email = #{email}
+            </if>
+            <if test="u.studentNum != null and u.studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="u.grade != null and u.grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="u.totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="u.totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+            <if test="u.phone != null and u.phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="!ids.isEmpty()">
+                and id not in
+                <foreach collection="ids" item="entity" open="(" separator="," close=")">
+                    #{entity}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAllGrade" resultMap="UsersMap">
+        select distinct grade
+        from table_users
+        where deleted_at is null
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_users
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="true">
+                and deleted_at is null
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_users( username, password, name, qq, phone, student_num, grade, total_score, total_solve_num,email)
+        values ( #{username}, #{password}, #{name}, #{qq}, #{phone}, #{studentNum}, #{grade}, #{totalScore}, #{totalSolveNum}, #{email})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_users(created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.qq}, #{entity.phone}, #{entity.studentNum}, #{entity.grade}, #{entity.totalScore}, #{entity.totalSolveNum})
+        </foreach>
+    </insert>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UsersMap">
+        select
+        id, created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num
+        from table_users
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="createdAt != null">
+                and created_at = #{createdAt}
+            </if>
+            <if test="updatedAt != null">
+                and updated_at = #{updatedAt}
+            </if>
+            <if test="deletedAt != null">
+                and deleted_at = #{deletedAt}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="qq != null and qq != ''">
+                and qq = #{qq}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                and student_num = #{studentNum}
+            </if>
+            <if test="grade != null and grade != ''">
+                and grade = #{grade}
+            </if>
+            <if test="totalScore != null">
+                and total_score = #{totalScore}
+            </if>
+            <if test="totalSolveNum != null">
+                and total_solve_num = #{totalSolveNum}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_users(created_at, updated_at, deleted_at, username, password, name, qq, phone, student_num, grade, total_score, total_solve_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.createdAt}, #{entity.updatedAt}, #{entity.deletedAt}, #{entity.username}, #{entity.password}, #{entity.name}, #{entity.qq}, #{entity.phone}, #{entity.studentNum}, #{entity.grade}, #{entity.totalScore}, #{entity.totalSolveNum})
+        </foreach>
+        on duplicate key update
+        created_at = values(created_at),
+        updated_at = values(updated_at),
+        deleted_at = values(deleted_at),
+        username = values(username),
+        password = values(password),
+        name = values(name),
+        qq = values(qq),
+        phone = values(phone),
+        student_num = values(student_num),
+        grade = values(grade),
+        total_score = values(total_score),
+        total_solve_num = values(total_solve_num)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_users
+        <set>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="qq != null and qq != ''">
+                qq = #{qq},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="studentNum != null and studentNum != ''">
+                student_num = #{studentNum},
+            </if>
+            <if test="grade != null and grade != ''">
+                grade = #{grade},
+            </if>
+            <if test="totalScore != null">
+                total_score = #{totalScore},
+            </if>
+            <if test="totalSolveNum != null">
+                total_solve_num = #{totalSolveNum},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email}
+            </if>
+        </set>
+        where id = #{id} and deleted_at is null
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_users where id = #{id}
+    </delete>
+
+
+</mapper>
+

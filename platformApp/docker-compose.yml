@@ -1,0 +1,129 @@
+version: '3'
+services:
+        #tomcat:
+        #image: tomcat:8-jdk8
+        #ports:
+        #- "8081:8080"
+        #depends_on:
+        #- mysql
+        #- redis
+        #volumes:
+        #- ./target:/usr/local/tomcat/webapps
+        #- ./catalina.sh:/usr/local/tomcat/bin/catalina.sh
+        #- ./logs:/usr/local/tomcat/logs
+        #- ./server.xml:/usr/local/tomcat/conf/server.xml
+        #- ./logging.properties:/usr/local/tomcat/conf/logging.properties
+  guestApp:
+    restart: always
+    container_name: guestApp
+    image: openjdk:8u342-slim-buster
+    depends_on:
+      - mysql
+      - redis
+      - mailserver
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./jar/platform-controller-guest/target/platform-guest.jar:/jar/app.jar
+      - ./jar/logs:/jar/logs
+      - ./jar/data:/jar/data
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - RECAPTCHA_KEY=${RECAPTCHA_KEY}
+      - RECAPTCHAV2_KEY=${RECAPTCHAV2_KEY}
+      - MYSQL_USE_DB=${MYSQL_USE_DB}  
+    entrypoint: java -jar -Dsun.net.inetaddr.ttl=30 -Dfile.encoding=utf-8 /jar/app.jar
+    # -Duser.timezone=GMT+08
+    privileged: true
+
+  adminApp:
+    restart: always
+    container_name: adminApp
+    image: openjdk:8u342-slim-buster
+    depends_on:
+      - mysql
+      - redis
+      - mailserver
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./jar/platform-controller-admin/target/platform-admin.jar:/jar/app.jar
+      - ./jar/logs:/jar/logs
+      - ./jar/data:/jar/data
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - RECAPTCHA_KEY=${RECAPTCHA_KEY}
+      - RECAPTCHAV2_KEY=${RECAPTCHAV2_KEY}
+      - MYSQL_USE_DB=${MYSQL_USE_DB}
+    entrypoint: java -jar -Dsun.net.inetaddr.ttl=30 -Dfile.encoding=utf-8 /jar/app.jar
+    # -Duser.timezone=GMT+08
+    privileged: true
+
+  mysql:
+    restart: always
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "6033:3306"
+    environment:
+            #  - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./sqls:/docker-entrypoint-initdb.d
+      - ./mysql_data/mysql:/var/lib/mysql
+    privileged: true
+
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    volumes:
+            #- ./redis.conf:/etc/redis/redis.conf
+      - ./redis-data:/data
+    command:
+      /bin/bash -c "redis-server --port 6379 --requirepass Wky15878295798 --appendonly yes"
+
+  mailserver:
+    restart: always
+    image: mailserver/docker-mailserver
+    container_name: mailserver
+    hostname: xiaogoudan.club
+    domainname: xiaogoudan.club
+    ports:
+      - "25:25"
+      - "587:587"
+      - "465:465"
+    volumes:
+      - ./dms/mail-data/:/var/mail/
+      - ./dms/mail-state/:/var/mail-state/
+      - ./dms/mail-logs/:/var/log/mail/
+      - ./dms/config/:/tmp/docker-mailserver/
+      - ./dms/cert:/etc/letsencrypt/
+      - /etc/localtime:/etc/localtime:ro
+      - ./dms/conf.d/50-user:/etc/amavis/conf.d/50-user
+    environment:
+      - ENABLE_FAIL2BAN=1
+      - SSL_TYPE=manual
+      - SSL_CERT_PATH=/etc/letsencrypt/xiaogoudan.club_bundle.crt
+      - SSL_KEY_PATH=/etc/letsencrypt/xiaogoudan.club.key
+      - PERMIT_DOCKER=network
+      # All env below are default settings:
+      - DMS_DEBUG=0
+      - ONE_DIR=1
+      - ENABLE_POSTGREY=0
+      - ENABLE_CLAMAV=0
+      - ENABLE_SPAMASSASSIN=0
+      # You may want to enable this: https://docker-mailserver.github.io/docker-mailserver/edge/config/environment/#spoof_protection
+      # See step 8 below, which demonstrates setup with enabled/disabled SPOOF_PROTECTION:
+      - SPOOF_PROTECTION=0
+      - TZ=Asia/Shanghai
+    cap_add:
+      - NET_ADMIN # For Fail2Ban to work
+      - SYS_PTRACE
